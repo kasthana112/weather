@@ -1,62 +1,87 @@
-function getWeatherForCity(city) {
+// Define variables for DOM elements
+const searchFormEl = document.querySelector('#search-form');
+const searchInputEl = document.querySelector('#search-input');
+const searchHistoryEl = document.querySelector('#search-history');
+const currentWeatherEl = document.querySelector('#current-weather');
+const forecastEl = document.querySelector('#forecast');
 
-    var weatherUrl = 'https://api.openweathermap.org/data/2.5/forecast?q=' + city + '&units=imperial&appid=' + kuhnApiKey;
+// Define variables for API
+const apiKey = 'your_api_key';
+const apiUrl = 'https://api.openweathermap.org/data/2.5/437d0304148a809ac2e7ff4ea2168163';
 
-    fetch(weatherUrl)
-        .then(function (response) {
-            if (!response.ok) {
-                throw response.json();
-            }
-            return response.json();
-        })
-        .then(function (weatherRes) {
-            var weatherArray = weatherRes.list;
-
-            var oldDate = weatherArray[0].dt_txt.split(" ")[0];
-            var newDate;
-            var weatherHTML = "<table><tr><td colspan='5'>";
-            weatherHTML += "<table border='1'>";
-            weatherHTML += "<tr><td>" + city + " (" + oldDate + ")<img src='http://openweathermap.org/img/wn/" + weatherArray[0].weather[0].icon + ".png'></img></td></tr>";
-            weatherHTML += "<tr><td>Temp: " + weatherArray[0].main.temp + "&#176;F</td></tr>";
-            weatherHTML += "<tr><td>Wind: " + weatherArray[0].wind.speed + " MPH </td></tr>";
-            weatherHTML += "<tr><td>Humidity: " + weatherArray[0].main.humidity + "%</td></tr>";
-            weatherHTML += "</table>";
-            weatherHTML += "</td></tr><tr><td colspan='5'>5-Day Forecast:</td></tr><tr>";
-
-            for (let i = 0; i < weatherArray.length; i++) {
-
-                newDate = weatherArray[i].dt_txt.split(" ")[0];
-
-                if (oldDate != newDate) {
-                    weatherHTML += "<td><table border='1'>";
-                    weatherHTML += "<tr><td>" + newDate + "</td></tr>";
-                    weatherHTML += "<tr><td><img src='http://openweathermap.org/img/wn/" + weatherArray[i].weather[0].icon + ".png'></img></td></tr>";
-                    weatherHTML += "<tr><td>Temp: " + weatherArray[i].main.temp + "&#176;F</td></tr>";
-                    weatherHTML += "<tr><td>Wind: " + weatherArray[i].wind.speed + " MPH </td></tr>";
-                    weatherHTML += "<tr><td>Humidity: " + weatherArray[i].main.humidity + "%</td></tr>";
-                    weatherHTML += "</table></td>";
-
-                    oldDate = newDate;
-                }
-            }
-            document.getElementById("weatherDiv").innerHTML = weatherHTML;
-
-            /* write query to page so user knows what they are viewing
-            resultTextEl.textContent = locRes.search.query;
-      
-            console.log(locRes);
-      
-            if (!locRes.results.length) {
-              console.log('No results found!');
-              resultContentEl.innerHTML = '<h3>No results found, search again!</h3>';
-            } else {
-              resultContentEl.textContent = '';
-              for (var i = 0; i < locRes.results.length; i++) {
-                printResults(locRes.results[i]);
-              }
-            }*/
-        })
-        .catch(function (error) {
-            console.error(error);
-        });
+// Define function to get current weather data
+async function getCurrentWeather(cityName) {
+  // Construct URL for API call
+  const url = `${apiUrl}weather?q=${cityName}&units=metric&appid=${437d0304148a809ac2e7ff4ea2168163}`;
+  try {
+    // Make API call and get response
+    const response = await fetch(url);
+    // If response is successful, parse response data and return it
+    if (response.ok) {
+      const data = await response.json();
+      return data;
+    }
+    // If response is not successful, throw an error
+    throw new Error(response.statusText);
+  } catch (error) {
+    console.log(error);
+    alert('Failed to get current weather data');
+  }
 }
+
+// Define function to get 5-day forecast data
+async function getForecast(cityName) {
+  // Construct URL for API call
+  const url = `${apiUrl}forecast?q=${cityName}&units=metric&appid=${437d0304148a809ac2e7ff4ea2168163}`;
+  try {
+    // Make API call and get response
+    const response = await fetch(url);
+    // If response is successful, parse response data and return it
+    if (response.ok) {
+      const data = await response.json();
+      return data;
+    }
+    // If response is not successful, throw an error
+    throw new Error(response.statusText);
+  } catch (error) {
+    console.log(error);
+    alert('Failed to get 5-day forecast data');
+  }
+}
+
+// Define function to display current weather data
+function displayCurrentWeather(data) {
+  // Get necessary data from response data
+  const cityName = data.name;
+  const date = new Date(data.dt * 1000);
+  const weatherIcon = data.weather[0].icon;
+  const temperature = data.main.temp;
+  const humidity = data.main.humidity;
+  const windSpeed = data.wind.speed;
+  // Update current weather element with data
+  currentWeatherEl.innerHTML = `
+    <h2>${cityName} (${date.toLocaleDateString()}) <img class="weather-icon" src="http://openweathermap.org/img/w/${weatherIcon}.png" alt="${data.weather[0].description}" /></h2>
+    <div class="weather-info">
+      <p>Temperature: ${temperature} &deg;C</p>
+      <p>Humidity: ${humidity}%</p>
+      <p>Wind Speed: ${windSpeed} m/s</p>
+    </div>
+  `;
+}
+
+// Define function to display 5-day forecast data
+function displayForecast(data) {
+  // Get necessary data from response data
+  const forecastData = data.list;
+  // Clear current forecast element
+  forecastEl.innerHTML = '';
+  // Loop through each forecast data and create forecast card
+  for (let i = 0; i < forecastData.length; i += 8) {
+    // Get necessary data from forecast data
+    const date = new Date(forecastData[i].dt * 1000);
+    const weatherIcon = forecastData[i].weather[0].icon;
+    const temperature = forecastData[i].main.temp;
+    const humidity = forecastData[i].main.humidity;
+    const windSpeed = forecastData[i
+
+    ]}}

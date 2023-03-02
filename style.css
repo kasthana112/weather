@@ -1,0 +1,96 @@
+/* Style the body */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+  }
+  
+  /* Style the page title */
+  h1 {
+    font-size: 2rem;
+    margin: 2rem 0;
+  }
+  
+  /* Style the search form */
+  .form-group label {
+    font-weight: bold;
+  }
+  
+  #search-btn {
+    margin-top: 1rem;
+  }
+  
+  /* Style the search history */
+  #search-history {
+    max-height: 300px;
+    overflow-y: auto;
+  }
+  
+  /* Style the list items in the search history */
+  .list-group-item {
+    cursor: pointer;
+  }
+  
+  /* Style the current weather */
+  #current-weather {
+    padding: 2rem;
+    border: 1px solid #ccc;
+    border-radius: 0.25rem;
+    background-color: #fff;
+  }
+  
+  #current-weather h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  #current-weather .weather-icon {
+    display: inline-block;
+    width: 64px;
+    height: 64px;
+    margin-right: 1rem;
+  }
+  
+  #current-weather .weather-info {
+    display: inline-block;
+    vertical-align: top;
+    font-size: 1.25rem;
+  }
+  
+  #current-weather .weather-info p {
+    margin: 0.5rem 0;
+  }
+  
+  /* Style the 5-day forecast */
+  #forecast {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+  }
+  
+  .forecast-card {
+    width: calc(20% - 1rem);
+    margin-bottom: 1rem;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 0.25rem;
+    padding: 1rem;
+  }
+  
+  .forecast-card h4 {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+  }
+  
+  .forecast-card .weather-icon {
+    display: block;
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 1rem;
+  }
+  
+  .forecast-card p {
+    font-size: 1.25rem;
+    margin: 0.5rem 0;
+  }
+  
