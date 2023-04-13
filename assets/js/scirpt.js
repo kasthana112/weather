@@ -1,4 +1,4 @@
-var APIKey = "d1af2c537e48864e4f4d6a0451359a75"; // weather API key
+var APIKey = "437d0304148a809ac2e7ff4ea2168163"; // weather API key
 var city; // city variable
 
 var searchBtn = document.querySelector("#search-button"); // search button element for event listener
@@ -6,7 +6,8 @@ var cityList = document.querySelector("#city-list"); // container element for pr
 var weatherEl = document.querySelector("#current-weather"); // parent element for current weather elements
 var forecastEl = document.querySelector("#five-day-forecast"); // parent element for forecast elements
 
-var storedCities = JSON.parse(localStorage.getItem("cities")); // pull local storage and parse into array
+var storedCities = JSON.parse(localStorage.getItem("cities"))||[];
+
 
 // if local storage has cities...
 if (storedCities != null) {
@@ -22,7 +23,33 @@ if (storedCities != null) {
     
     fetchData(storedCities[0]); // fetch data for first city user looked for and populate weather data
 }
+function getButton(city) {
+if (localStorage.getItem("cities") == null) {
+    // make a shortcut button for this city
+    var newCityEl = document.createElement("button");
+    var newLiEl = document.createElement("li");
+    newCityEl.textContent = city;
+    newLiEl.appendChild(newCityEl);
+    cityList.appendChild(newLiEl);
 
+    // save this city to storage
+    var storedCities = [city];
+    localStorage.setItem("cities", JSON.stringify(storedCities));
+}
+// OR if there are cities in storage but they don't include this one yet...
+else if (!localStorage.getItem("cities").includes(city)) {
+    // make a shortcut button for this city
+    var newCityEl = document.createElement("button");
+    var newLiEl = document.createElement("li");
+    newCityEl.textContent = city;
+    newLiEl.appendChild(newCityEl);
+    cityList.appendChild(newLiEl);
+
+    // pull local storage, parse it, push this city onto the end, restringify it, and save it back to local storage
+    var storedCities = JSON.parse(localStorage.getItem("cities"));
+    storedCities.push(city);
+    localStorage.setItem("cities", JSON.stringify(storedCities));
+}
 // function called by search button event listener; stores user's search input, resets form to empty, and calls fetchData
 function getWeather(event) {
     event.preventDefault();
@@ -30,9 +57,10 @@ function getWeather(event) {
     document.querySelector("#city-input").value = "";
     fetchData(city);
 }
-
+}
 // fetches data for both current and future weather, populates page with it, and stores city to local storage and new "previous search" buttons if not already there
 function fetchData(city) {
+    console.log(city);
     // create fetch urls with user's chosen city and API key
     var currentURL = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&units=imperial&appid=" + APIKey;
     var forecastURL  = "https://api.openweathermap.org/data/2.5/forecast?q=" + city + "&units=imperial&appid=" + APIKey;
@@ -43,32 +71,7 @@ function fetchData(city) {
             // if fetch gets a successful response...
             if (response.ok) {
                 // if nothing in local storage...
-                if (localStorage.getItem("cities") == null) {
-                    // make a shortcut button for this city
-                    var newCityEl = document.createElement("button");
-                    var newLiEl = document.createElement("li");
-                    newCityEl.textContent = city;
-                    newLiEl.appendChild(newCityEl);
-                    cityList.appendChild(newLiEl);
-
-                    // save this city to storage
-                    var storedCities = [city];
-                    localStorage.setItem("cities", JSON.stringify(storedCities));
-                }
-                // OR if there are cities in storage but they don't include this one yet...
-                else if (!localStorage.getItem("cities").includes(city)) {
-                    // make a shortcut button for this city
-                    var newCityEl = document.createElement("button");
-                    var newLiEl = document.createElement("li");
-                    newCityEl.textContent = city;
-                    newLiEl.appendChild(newCityEl);
-                    cityList.appendChild(newLiEl);
-
-                    // pull local storage, parse it, push this city onto the end, restringify it, and save it back to local storage
-                    var storedCities = JSON.parse(localStorage.getItem("cities"));
-                    storedCities.push(city);
-                    localStorage.setItem("cities", JSON.stringify(storedCities));
-                }
+            getButton(city);
 
                 // json to get relevant data out of response
                 response.json().then(function (data) {
@@ -98,7 +101,9 @@ function fetchData(city) {
             }
         })
         .catch(function (error) {
-            alert("Unable to connect"); // alerts if server connection fails
+            console.log(error);
+            // alert("Unable to connect");
+             // alerts if server connection fails
         });
 
     // fetch data for forecast
@@ -134,12 +139,19 @@ function fetchData(city) {
             }
         })
         .catch(function (error) {
-            alert("Unable to connect"); // alerts if server connection fails (distinguish from current weather connection failure alert?)
+            console.log(error);
+            // alert("Unable to connect"); // alerts if server connection fails (distinguish from current weather connection failure alert?)
         });
 }
 
 // event listener for input's search button
-searchBtn.addEventListener("click", getWeather);
+searchBtn.addEventListener("click", function (event){
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    city=document.getElementById("city-input").value;
+    document.getElementById("city-input").value = "";
+    fetchData(city);
+});
 
 // event listener for "previous searches" buttons
 cityList.addEventListener("click", function (event) {
